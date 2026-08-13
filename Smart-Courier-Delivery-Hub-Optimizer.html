@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Smart Courier &amp; Delivery Hub Optimizer</title>
+    <style>
+        /* ---------- RESET & BASE ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0b0d17;
+            color: #e8edf5;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #141929;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2d3a5e;
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a6a9f;
+        }
+
+        /* ---------- APP SHELL ---------- */
+        #app {
+            max-width: 1280px;
+            width: 100%;
+            background: #0f1322;
+            border-radius: 28px;
+            padding: 24px 28px 32px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(2px);
+            transition: all 0.2s;
+        }
+
+        /* ---------- HEADER ---------- */
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 22px;
+        }
+        .app-header h1 {
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #b6c8ff, #6c8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .app-header h1 small {
+            font-size: 13px;
+            font-weight: 400;
+            -webkit-text-fill-color: #8892b0;
+            background: none;
+            color: #8892b0;
+            letter-spacing: 0.2px;
+        }
+        .user-badge {
+            background: #1a2036;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .user-badge .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+        .user-badge .status-dot.online {
+            background: #4ade80;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+        }
+        .user-badge .status-dot.offline {
+            background: #64748b;
+        }
+        .user-badge .uname {
+            font-weight: 500;
+            color: #e8edf5;
+        }
+        .user-badge .uphone {
+            color: #8892b0;
+            font-size: 13px;
+        }
+
+        /* ---------- NAV TABS ---------- */
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 8px;
+            margin-bottom: 24px;
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .nav-tabs button {
+            background: transparent;
+            border: none;
+            color: #8892b0;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 8px 18px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 0.2px;
+            font-family: inherit;
+            white-space: nowrap;
+        }
+        .nav-tabs button:hover {
+            color: #e8edf5;
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .nav-tabs button.active {
+            color: #fff;
+            background: #1f2a4a;
+            box-shadow: 0 0 0 1px rgba(108, 140, 255, 0.2);
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+        .main-content {
+            min-height: 480px;
+            animation: fadeIn 0.25s ease;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0.4;
+                transform: translateY(6px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+        .panel.active {
+            display: block;
+        }
+
+        /* ---------- CARDS ---------- */
+        .card {
+            background: #141929;
+            border-radius: 18px;
+            padding: 22px 26px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transition: 0.15s;
+        }
+        .card-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: #e8edf5;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card-title .badge {
+            font-size: 11px;
+            font-weight: 500;
+            background: #1f2a4a;
+            color: #8aa4ff;
+            padding: 2px 12px;
+            border-radius: 40px;
+        }
+        .card-sub {
+            color: #8892b0;
+            font-size: 14px;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        /* ---------- FORMS ---------- */
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 20px;
+            align-items: flex-end;
+            margin-bottom: 14px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1 0 160px;
+        }
+        .form-group label {
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #8892b0;
+        }
+        .form-group input,
+        .form-group select {
+            background: #0b0d17;
+            border: 1px solid #1f2842;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #e8edf5;
+            font-family: inherit;
+            transition: 0.2s;
+            outline: none;
+            width: 100%;
+            min-width: 120px;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #4a6a9f;
+            box-shadow: 0 0 0 3px rgba(74, 106, 159, 0.15);
+        }
+        .form-group input::placeholder {
+            color: #4a5578;
+        }
+
+        .btn {
+            background: #1f2a4a;
+            border: none;
+            color: #e8edf5;
+            font-weight: 500;
+            font-size: 14px;
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            background: #2a3a64;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-primary {
+            background: #2d4a8c;
+            border-color: rgba(108, 140, 255, 0.2);
+        }
+        .btn-primary:hover {
+            background: #3a5ea8;
+        }
+        .btn-success {
+            background: #1b6b4a;
+            border-color: rgba(74, 222, 128, 0.15);
+        }
+        .btn-success:hover {
+            background: #228b5e;
+        }
+        .btn-danger {
+            background: #6b2a3a;
+            border-color: rgba(255, 82, 82, 0.15);
+        }
+        .btn-danger:hover {
+            background: #8a3a4e;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #2d3a5e;
+        }
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: #4a6a9f;
+        }
+        .btn-sm {
+            padding: 6px 16px;
+            font-size: 12px;
+        }
+
+        /* ---------- TABLES / LISTS ---------- */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .data-item {
+            background: #0b0d17;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #1a2036;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .data-item .idx {
+            color: #4a6a9f;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+        .data-item .val {
+            color: #b6c8ff;
+        }
+        .data-item .hint {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .road-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 10px;
+        }
+        .road-item {
+            background: #0b0d17;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border-left: 3px solid #2d4a8c;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+        }
+        .road-item .dist {
+            color: #8aa4ff;
+            font-weight: 500;
+        }
+
+        .path-display {
+            background: #0b0d17;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            margin: 8px 0 12px;
+            border: 1px solid #1a2036;
+            word-break: break-all;
+            color: #b6c8ff;
+        }
+        .path-display .arrow {
+            color: #4a6a9f;
+        }
+
+        .result-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 40px;
+            margin: 14px 0 8px;
+        }
+        .result-stats .stat {
+            display: flex;
+            flex-direction: column;
+        }
+        .result-stats .stat .label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .result-stats .stat .value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #e8edf5;
+        }
+        .result-stats .stat .value.green {
+            color: #4ade80;
+        }
+        .result-stats .stat .value.blue {
+            color: #6c8cff;
+        }
+        .result-stats .stat .value.gold {
+            color: #fbbf24;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 14px 0;
+        }
+        @media (max-width: 640px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .random-trial {
+            background: #0b0d17;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            border-bottom: 1px solid #141929;
+        }
+        .random-trial .trial-label {
+            color: #8892b0;
+        }
+        .random-trial .trial-dist {
+            font-weight: 500;
+            color: #b6c8ff;
+        }
+
+        /* ---------- OTP ---------- */
+        .otp-box {
+            background: #0b0d17;
+            border: 1px dashed #2d4a8c;
+            border-radius: 14px;
+            padding: 18px 22px;
+            margin: 14px 0;
+            text-align: center;
+        }
+        .otp-box .otp-code {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #6c8cff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ---------- STATUS / TOAST ---------- */
+        .toast {
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            border-left: 4px solid;
+            background: #141929;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.25s ease;
+        }
+        .toast.success {
+            border-color: #4ade80;
+            color: #b6f0c0;
+        }
+        .toast.error {
+            border-color: #ff5252;
+            color: #fbb8b8;
+        }
+        .toast.info {
+            border-color: #6c8cff;
+            color: #b6c8ff;
+        }
+        .toast.warning {
+            border-color: #fbbf24;
+            color: #fde68a;
+        }
+        @keyframes slideDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+        @media (max-width: 720px) {
+            #app {
+                padding: 16px;
+            }
+            .app-header h1 {
+                font-size: 18px;
+                flex-wrap: wrap;
+            }
+            .nav-tabs button {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            .card {
+                padding: 16px;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-group {
+                flex: 1 0 auto;
+                width: 100%;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .result-stats {
+                gap: 12px;
+            }
+            .result-stats .stat .value {
+                font-size: 17px;
+            }
+            .data-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 420px) {
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+            .user-badge {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            .app-header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+        }
+
+        /* ---------- UTILITY ---------- */
+        .mt-8 {
+            margin-top: 8px;
+        }
+        .mt-12 {
+            margin-top: 12px;
+        }
+        .mt-16 {
+            margin-top: 16px;
+        }
+        .mb-8 {
+            margin-bottom: 8px;
+        }
+        .flex {
+            display: flex;
+        }
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+        .gap-8 {
+            gap: 8px;
+        }
+        .gap-12 {
+            gap: 12px;
+        }
+        .items-center {
+            align-items: center;
+        }
+        .text-muted {
+            color: #64748b;
+            font-size: 13px;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .w-full {
+            width: 100%;
+        }
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+
+        <!-- ===== HEADER ===== -->
+        <header class="app-header">
+            <h1>
+                &#128230; Courier Hub
+                <small>Dijkstra &middot; Greedy TSP</small>
+            </h1>
+            <div class="user-badge" id="userBadge">
+                <span class="status-dot offline" id="statusDot"></span>
+                <span id="userDisplay">Not logged in</span>
+            </div>
+        </header>
+
+        <!-- ===== NAV ===== -->
+        <nav class="nav-tabs" id="navTabs">
+            <button class="active" data-tab="dashboard">&#128202; Dashboard</button>
+            <button data-tab="addLocation">&#43; Add Location</button>
+            <button data-tab="addRoad">&#8594; Add Road</button>
+            <button data-tab="viewNetwork">&#128065; View Network</button>
+            <button data-tab="dijkstra">&#128640; Shortest Paths</button>
+            <button data-tab="optimize">&#9889; Optimize Route</button>
+            <button data-tab="compare">&#128260; Compare Routes</button>
+            <button data-tab="account">&#128100; Account</button>
+            <button data-tab="delivery">&#128666; Receive Delivery</button>
+        </nav>
+
+        <!-- ===== MAIN ===== -->
+        <div class="main-content">
+
+            <!-- Toast container -->
+            <div id="toastContainer"></div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Dashboard                                              -->
+            <!-- ============================================================ -->
+            <div class="panel active" id="panelDashboard">
+                <div class="card">
+                    <div class="card-title">&#128202; Network Overview</div>
+                    <div id="dashboardStats" class="result-stats">
+                        <div class="stat"><span class="label">Locations</span><span class="value" id="statLocations">0</span></div>
+                        <div class="stat"><span class="label">Roads</span><span class="value" id="statRoads">0</span></div>
+                        <div class="stat"><span class="label">Fuel Rate</span><span class="value gold" id="statFuel">Tk 15.00/km</span></div>
+                        <div class="stat"><span class="label">Logged In</span><span class="value" id="statLoggedIn">No</span></div>
+                    </div>
+                    <div class="card-sub">
+                        <strong>Default network loaded:</strong> DIU_Hub &rarr; Ashulia, Tongi, Uttara, Mirpur, Dhamrai, Banani, Gulshan, Dhanmondi.
+                        <br/>Use the tabs above to manage locations, roads, and run optimizations.
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">&#128220; Quick Actions</div>
+                    <div class="flex flex-wrap gap-8">
+                        <button class="btn btn-primary" onclick="switchTab('addLocation')">&#43; Add Location</button>
+                        <button class="btn btn-primary" onclick="switchTab('addRoad')">&#8594; Add Road</button>
+                        <button class="btn btn-success" onclick="switchTab('optimize')">&#9889; Optimize Route</button>
+                        <button class="btn btn-outline" onclick="switchTab('delivery')">&#128666; Receive Delivery</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Add Location                                           -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelAddLocation">
+                <div class="card">
+                    <div class="card-title">&#43; Add Delivery Location</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Location Name</label>
+                            <input type="text" id="locNameInput" placeholder="e.g. Motijheel" />
+                        </div>
+                        <button class="btn btn-primary" onclick="addLocation()">Add Location</button>
+                    </div>
+                    <div id="locList" class="data-grid mt-8"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Add Road                                               -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelAddRoad">
+                <div class="card">
+                    <div class="card-title">&#8594; Add Road Connection</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>From (index)</label>
+                            <input type="number" id="roadFrom" placeholder="0" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>To (index)</label>
+                            <input type="number" id="roadTo" placeholder="1" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Distance (km)</label>
+                            <input type="number" id="roadDist" placeholder="5.0" step="0.1" min="0.01" />
+                        </div>
+                        <button class="btn btn-primary" onclick="addRoad()">Add Road</button>
+                    </div>
+                    <div id="roadList" class="road-list mt-8"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: View Network                                           -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelViewNetwork">
+                <div class="card">
+                    <div class="card-title">&#128065; Road Network</div>
+                    <div id="networkDisplay"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Dijkstra                                               -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelDijkstra">
+                <div class="card">
+                    <div class="card-title">&#128640; Shortest Paths from Hub</div>
+                    <button class="btn btn-primary" onclick="runDijkstra()">Run Dijkstra</button>
+                    <div id="dijkstraResults" class="mt-12"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Optimize Route                                         -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelOptimize">
+                <div class="card">
+                    <div class="card-title">&#9889; Optimized Delivery Route</div>
+                    <div class="card-sub">Greedy Nearest-Neighbor heuristic (approximate TSP).</div>
+                    <button class="btn btn-primary" onclick="runOptimize()">Optimize Route</button>
+                    <div id="optimizeResults" class="mt-12"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Compare Routes                                         -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelCompare">
+                <div class="card">
+                    <div class="card-title">&#128260; Compare Optimized vs Random Routes</div>
+                    <div class="card-sub">5 random route trials for comparison.</div>
+                    <button class="btn btn-primary" onclick="runCompare()">Run Comparison</button>
+                    <div id="compareResults" class="mt-12"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Account                                                -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelAccount">
+                <div class="card">
+                    <div class="card-title">&#128100; Account Management</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="regName" placeholder="John Doe" />
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" id="regPhone" placeholder="017xxxxxxxx" />
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" id="regAge" placeholder="25" min="1" max="120" />
+                        </div>
+                        <button class="btn btn-success" onclick="registerUser()">Register</button>
+                    </div>
+                    <div class="form-row mt-8">
+                        <div class="form-group" style="flex:2;">
+                            <label>Login with Phone</label>
+                            <input type="text" id="loginPhone" placeholder="017xxxxxxxx" />
+                        </div>
+                        <button class="btn btn-primary" onclick="loginUser()">Login</button>
+                        <button class="btn btn-danger" onclick="logoutUser()">Logout</button>
+                    </div>
+                    <div id="accountStatus" class="mt-12"></div>
+                    <hr style="border-color:#1a2036;margin:20px 0;" />
+                    <div class="card-title" style="font-size:15px;">&#11088; Favorite Receiving Point</div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:2;">
+                            <label>Location Index</label>
+                            <input type="number" id="favIdx" placeholder="1" min="1" />
+                        </div>
+                        <button class="btn btn-outline" onclick="setFavorite()">Set Favorite</button>
+                    </div>
+                    <div id="favStatus" class="text-muted mt-8"></div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- PANEL: Receive Delivery                                       -->
+            <!-- ============================================================ -->
+            <div class="panel" id="panelDelivery">
+                <div class="card">
+                    <div class="card-title">&#128666; Estimate &amp; Receive Delivery</div>
+                    <div class="card-sub">Shortest distance from Hub to your receiving point, cost, wait time, and OTP verification.</div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:2;">
+                            <label>Receiving Location Index</label>
+                            <input type="number" id="deliveryIdx" placeholder="1" min="1" />
+                        </div>
+                        <button class="btn btn-primary" onclick="receiveDelivery()">Estimate &amp; Deliver</button>
+                    </div>
+                    <div id="deliveryResults" class="mt-12"></div>
+                </div>
+            </div>
+
+        </div><!-- /main-content -->
+    </div><!-- /app -->
+
+    <script>
+        // ======================================================================
+        //  DATA / STATE
+        // ======================================================================
+
+        const MAX_LOC = 50;
+        const NAME_LEN = 30;
+        const INF = 1e9;
+        const AVG_SPEED_KMH = 20.0;
+        const OTP_MAX_TRIES = 3;
+
+        // Graph
+        let graph = {
+            numLoc: 1,
+            names: ['DIU_Hub'],
+            adj: [],
+            fuelRate: 15.0
+        };
+        // init adjacency
+        for (let i = 0; i < MAX_LOC; i++) {
+            graph.adj[i] = [];
+            for (let j = 0; j < MAX_LOC; j++) {
+                graph.adj[i][j] = (i === j) ? 0 : INF;
+            }
+        }
+
+        // Users
+        let users = [];
+        let loggedInUserIdx = -1;
+
+        // OTP state for delivery
+        let pendingOTP = null;
+        let pendingDeliveryDest = -1;
+        let pendingDeliveryCost = 0;
+        let otpAttempts = 0;
+
+        // ======================================================================
+        //  UTILITY
+        // ======================================================================
+
+        function getLocName(idx) {
+            if (idx >= 0 && idx < graph.numLoc) return graph.names[idx];
+            return '?';
+        }
+
+        function findUserByPhone(phone) {
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].phone === phone) return i;
+            }
+            return -1;
+        }
+
+        function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = rand(0, i);
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // ======================================================================
+        //  TOAST
+        // ======================================================================
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const el = document.createElement('div');
+            el.className = `toast ${type}`;
+            const icons = { success: '&#10004;', error: '&#10060;', warning: '&#9888;', info: '&#8505;' };
+            el.innerHTML = `${icons[type] || '&#8505;'} ${message}`;
+            container.appendChild(el);
+            setTimeout(() => {
+                el.style.opacity = '0';
+                el.style.transition = 'opacity 0.4s';
+                setTimeout(() => el.remove(), 400);
+            }, 5000);
+        }
+
+        // ======================================================================
+        //  GRAPH ALGORITHMS
+        // ======================================================================
+
+        function dijkstra(src) {
+            const n = graph.numLoc;
+            const dist = new Array(n).fill(INF);
+            const parent = new Array(n).fill(-1);
+            const visited = new Array(n).fill(false);
+            dist[src] = 0;
+
+            for (let count = 0; count < n; count++) {
+                let u = -1;
+                let best = INF;
+                for (let i = 0; i < n; i++) {
+                    if (!visited[i] && dist[i] < best) { best = dist[i];
+                        u = i; }
+                }
+                if (u === -1) break;
+                visited[u] = true;
+                for (let v = 0; v < n; v++) {
+                    if (!visited[v] && graph.adj[u][v] < INF) {
+                        const nd = dist[u] + graph.adj[u][v];
+                        if (nd < dist[v]) { dist[v] = nd;
+                            parent[v] = u; }
+                    }
+                }
+            }
+            return { dist, parent };
+        }
+
+        function computeAllPairs() {
+            const n = graph.numLoc;
+            const mat = [];
+            for (let i = 0; i < n; i++) {
+                const { dist } = dijkstra(i);
+                mat[i] = dist.slice();
+            }
+            return mat;
+        }
+
+        function getPathString(parent, dest) {
+            if (dest === -1) return '';
+            const parts = [];
+            let cur = dest;
+            while (cur !== -1) {
+                parts.push(getLocName(cur));
+                cur = parent[cur];
+            }
+            return parts.reverse().join(' -> ');
+        }
+
+        // ======================================================================
+        //  GREEDY NEAREST NEIGHBOR
+        // ======================================================================
+
+        function greedyNearestNeighbor(distMat) {
+            const n = graph.numLoc;
+            const result = {
+                route: [],
+                totalDistance: 0,
+                skipped: [],
+                couldNotReturn: false
+            };
+
+            if (n < 2) return result;
+
+            const visited = new Array(n).fill(false);
+            visited[0] = true;
+            result.route.push(0);
+            let current = 0;
+            let remaining = n - 1;
+
+            while (remaining > 0) {
+                let next = -1;
+                let best = INF;
+                for (let v = 1; v < n; v++) {
+                    if (!visited[v] && distMat[current][v] < best) {
+                        best = distMat[current][v];
+                        next = v;
+                    }
+                }
+                if (next === -1) {
+                    for (let v = 1; v < n; v++) {
+                        if (!visited[v]) {
+                            result.skipped.push(v);
+                            visited[v] = true;
+                        }
+                    }
+                    break;
+                }
+                visited[next] = true;
+                result.totalDistance += best;
+                result.route.push(next);
+                current = next;
+                remaining--;
+            }
+
+            if (current !== 0) {
+                if (distMat[current][0] < INF) {
+                    result.totalDistance += distMat[current][0];
+                    result.route.push(0);
+                } else {
+                    result.couldNotReturn = true;
+                }
+            }
+            return result;
+        }
+
+        // ======================================================================
+        //  RANDOM ROUTE
+        // ======================================================================
+
+        function randomRouteDistance(distMat, reachable) {
+            const perm = reachable.slice();
+            shuffleArray(perm);
+            let total = 0;
+            let current = 0;
+            const route = [0];
+            for (const node of perm) {
+                total += distMat[current][node];
+                current = node;
+                route.push(current);
+            }
+            total += distMat[current][0];
+            route.push(0);
+            return { distance: total, route };
+        }
+
+        // ======================================================================
+        //  UI: SWITCH TABS
+        // ======================================================================
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-tabs button').forEach(el => el.classList.remove('active'));
+
+            const panel = document.getElementById('panel' + tabId.charAt(0).toUpperCase() + tabId.slice(1));
+            if (panel) panel.classList.add('active');
+
+            const btn = document.querySelector(`.nav-tabs button[data-tab="${tabId}"]`);
+            if (btn) btn.classList.add('active');
+
+            // refresh data on certain tabs
+            if (tabId === 'dashboard') updateDashboard();
+            if (tabId === 'addLocation') renderLocationList();
+            if (tabId === 'addRoad') renderRoadList();
+            if (tabId === 'viewNetwork') renderNetwork();
+            if (tabId === 'account') updateAccountUI();
+        }
+
+        // ======================================================================
+        //  DASHBOARD
+        // ======================================================================
+
+        function updateDashboard() {
+            let roads = 0;
+            for (let i = 0; i < graph.numLoc; i++) {
+                for (let j = i + 1; j < graph.numLoc; j++) {
+                    if (graph.adj[i][j] < INF) roads++;
+                }
+            }
+            document.getElementById('statLocations').textContent = graph.numLoc;
+            document.getElementById('statRoads').textContent = roads;
+            document.getElementById('statFuel').textContent = `Tk ${graph.fuelRate.toFixed(2)}/km`;
+            document.getElementById('statLoggedIn').textContent = loggedInUserIdx >= 0 ? 'Yes' : 'No';
+            updateUserBadge();
+        }
+
+        function updateUserBadge() {
+            const dot = document.getElementById('statusDot');
+            const display = document.getElementById('userDisplay');
+            if (loggedInUserIdx >= 0 && loggedInUserIdx < users.length) {
+                const u = users[loggedInUserIdx];
+                dot.className = 'status-dot online';
+                display.innerHTML =
+                    `<span class="uname">${u.name}</span> <span class="uphone">${u.phone}</span>`;
+            } else {
+                dot.className = 'status-dot offline';
+                display.textContent = 'Not logged in';
+            }
+        }
+
+        // ======================================================================
+        //  LOCATIONS
+        // ======================================================================
+
+        function addLocation() {
+            const input = document.getElementById('locNameInput');
+            const name = input.value.trim();
+            if (!name) { showToast('Please enter a location name.', 'error'); return; }
+            if (graph.numLoc >= MAX_LOC) { showToast(`Maximum locations (${MAX_LOC}) reached.`, 'error'); return; }
+            for (let i = 0; i < graph.numLoc; i++) {
+                if (graph.names[i] === name) { showToast(`Location '${name}' already exists.`, 'warning'); return; }
+            }
+            graph.names[graph.numLoc] = name;
+            graph.numLoc++;
+            input.value = '';
+            renderLocationList();
+            updateDashboard();
+            showToast(`Added '${name}' as location [${graph.numLoc - 1}].`, 'success');
+        }
+
+        function renderLocationList() {
+            const container = document.getElementById('locList');
+            if (graph.numLoc === 0) { container.innerHTML =
+                '<span class="text-muted">No locations yet.</span>'; return; }
+            let html = '';
+            for (let i = 0; i < graph.numLoc; i++) {
+                const isHub = i === 0;
+                html += `<div class="data-item">
+                            <span><span class="idx">[${i}]</span> <span class="val">${graph.names[i]}</span> ${isHub ? '<span class="hint">(HUB)</span>' : ''}</span>
+                        </div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // ======================================================================
+        //  ROADS
+        // ======================================================================
+
+        function addRoad() {
+            const u = parseInt(document.getElementById('roadFrom').value);
+            const v = parseInt(document.getElementById('roadTo').value);
+            const d = parseFloat(document.getElementById('roadDist').value);
+            if (isNaN(u) || isNaN(v) || isNaN(d)) { showToast('Please fill all fields with valid numbers.', 'error'); return; }
+            if (u < 0 || u >= graph.numLoc || v < 0 || v >= graph.numLoc) { showToast('Invalid location index.', 'error'); return; }
+            if (u === v) { showToast('Cannot connect a location to itself.', 'error'); return; }
+            if (d <= 0) { showToast('Distance must be positive.', 'error'); return; }
+            const updated = graph.adj[u][v] < INF;
+            graph.adj[u][v] = d;
+            graph.adj[v][u] = d;
+            document.getElementById('roadFrom').value = '';
+            document.getElementById('roadTo').value = '';
+            document.getElementById('roadDist').value = '';
+            renderRoadList();
+            updateDashboard();
+            showToast(`${updated ? 'Updated' : 'Added'} road: ${getLocName(u)} ↔ ${getLocName(v)} = ${d.toFixed(2)} km`,
+                'success');
+        }
+
+        function renderRoadList() {
+            const container = document.getElementById('roadList');
+            let html = '';
+            let any = false;
+            for (let i = 0; i < graph.numLoc; i++) {
+                for (let j = i + 1; j < graph.numLoc; j++) {
+                    if (graph.adj[i][j] < INF) {
+                        any = true;
+                        html += `<div class="road-item">
+                                    <span>${getLocName(i)} ↔ ${getLocName(j)}</span>
+                                    <span class="dist">${graph.adj[i][j].toFixed(2)} km</span>
+                                </div>`;
+                    }
+                }
+            }
+            container.innerHTML = any ? html : '<span class="text-muted">No roads added yet.</span>';
+        }
+
+        // ======================================================================
+        //  VIEW NETWORK
+        // ======================================================================
+
+        function renderNetwork() {
+            const container = document.getElementById('networkDisplay');
+            let html = '<div class="card-sub"><strong>Locations:</strong></div><div class="data-grid">';
+            for (let i = 0; i < graph.numLoc; i++) {
+                html +=
+                    `<div class="data-item"><span><span class="idx">[${i}]</span> <span class="val">${graph.names[i]}</span> ${i===0?'<span class="hint">(HUB)</span>':''}</span></div>`;
+            }
+            html += '</div><div class="card-sub mt-12"><strong>Roads:</strong></div><div class="road-list">';
+            let any = false;
+            for (let i = 0; i < graph.numLoc; i++) {
+                for (let j = i + 1; j < graph.numLoc; j++) {
+                    if (graph.adj[i][j] < INF) {
+                        any = true;
+                        html += `<div class="road-item">
+                                    <span>${getLocName(i)} ↔ ${getLocName(j)}</span>
+                                    <span class="dist">${graph.adj[i][j].toFixed(2)} km</span>
+                                </div>`;
+                    }
+                }
+            }
+            html += any ? '' : '<span class="text-muted">No roads added yet.</span>';
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ======================================================================
+        //  DIJKSTRA
+        // ======================================================================
+
+        function runDijkstra() {
+            if (graph.numLoc < 2) { showToast('No delivery points added yet.', 'warning'); return; }
+            const { dist, parent } = dijkstra(0);
+            let html = '';
+            let anyUnreachable = false;
+            for (let i = 1; i < graph.numLoc; i++) {
+                if (dist[i] >= INF) {
+                    html += `<div class="data-item"><span class="val">${graph.names[i]}</span> <span style="color:#ff5252;">UNREACHABLE</span></div>`;
+                    anyUnreachable = true;
+                } else {
+                    const pathStr = getPathString(parent, i);
+                    html += `<div class="data-item" style="flex-wrap:wrap;">
+                                <span><span class="val">${graph.names[i]}</span> <span class="hint">${dist[i].toFixed(2)} km</span></span>
+                                <span class="hint" style="font-size:12px;font-family:monospace;">${pathStr}</span>
+                            </div>`;
+                }
+            }
+            if (anyUnreachable) {
+                html +=
+                    `<div class="text-muted mt-8" style="color:#fbbf24;">&#9888; Some locations are unreachable from the Hub.</div>`;
+            }
+            document.getElementById('dijkstraResults').innerHTML = html || '<span class="text-muted">Run Dijkstra to see results.</span>';
+            showToast('Dijkstra complete.', 'info');
+        }
+
+        // ======================================================================
+        //  OPTIMIZE ROUTE
+        // ======================================================================
+
+        function runOptimize() {
+            if (graph.numLoc < 2) { showToast('Add delivery points first.', 'warning'); return; }
+            const distMat = computeAllPairs();
+            const result = greedyNearestNeighbor(distMat);
+
+            let html = '';
+            if (result.route.length <= 1) {
+                html = '<span class="text-muted">No reachable delivery points from Hub.</span>';
+            } else {
+                const routeStr = result.route.map(i => graph.names[i]).join(' → ');
+                html += `<div class="path-display">${routeStr}</div>`;
+                html += `<div class="result-stats">
+                            <div class="stat"><span class="label">Total Distance</span><span class="value blue">${result.totalDistance.toFixed(2)} km</span></div>
+                            <div class="stat"><span class="label">Fuel Cost</span><span class="value gold">Tk ${(result.totalDistance * graph.fuelRate).toFixed(2)}</span></div>
+                        </div>`;
+                if (result.couldNotReturn) {
+                    html += `<div class="text-muted" style="color:#fbbf24;">&#9888; Could not return to Hub.</div>`;
+                }
+                if (result.skipped.length > 0) {
+                    const skippedNames = result.skipped.map(i => graph.names[i]).join(', ');
+                    html += `<div class="text-muted" style="color:#fbbf24;">&#9888; Skipped (unreachable): ${skippedNames}</div>`;
+                }
+            }
+            document.getElementById('optimizeResults').innerHTML = html;
+            showToast('Optimization complete.', 'success');
+        }
+
+        // ======================================================================
+        //  COMPARE ROUTES
+        // ======================================================================
+
+        function runCompare() {
+            if (graph.numLoc < 2) { showToast('Add delivery points first.', 'warning'); return; }
+            const distMat = computeAllPairs();
+            const greedy = greedyNearestNeighbor(distMat);
+
+            if (greedy.route.length <= 1) {
+                showToast('No reachable delivery points from Hub.', 'warning');
+                return;
+            }
+
+            const reachable = [];
+            for (let i = 0; i < greedy.route.length; i++) {
+                if (greedy.route[i] > 0) reachable.push(greedy.route[i]);
+            }
+            if (reachable.length === 0) { showToast('No reachable delivery points.', 'warning'); return; }
+
+            const TRIALS = 5;
+            let totalRandom = 0;
+            let bestRandom = Infinity;
+            let worstRandom = 0;
+            const trials = [];
+
+            for (let t = 0; t < TRIALS; t++) {
+                const { distance, route } = randomRouteDistance(distMat, reachable);
+                trials.push({ distance, route });
+                totalRandom += distance;
+                if (distance < bestRandom) bestRandom = distance;
+                if (distance > worstRandom) worstRandom = distance;
+            }
+            const avgRandom = totalRandom / TRIALS;
+
+            let html = `<div class="comparison-grid">
+                            <div style="background:#0b0d17;padding:16px;border-radius:12px;border:1px solid #1a2036;">
+                                <strong style="color:#6c8cff;">&#9889; Greedy Optimized</strong>
+                                <div style="margin-top:8px;"><span class="text-muted">Distance:</span> <strong>${greedy.totalDistance.toFixed(2)} km</strong></div>
+                                <div><span class="text-muted">Fuel:</span> <strong>Tk ${(greedy.totalDistance * graph.fuelRate).toFixed(2)}</strong></div>
+                                <div class="path-display" style="font-size:12px;margin-top:8px;">${greedy.route.map(i=>graph.names[i]).join(' → ')}</div>
+                            </div>
+                            <div style="background:#0b0d17;padding:16px;border-radius:12px;border:1px solid #1a2036;">
+                                <strong style="color:#fbbf24;">&#128260; Random Average (${TRIALS} trials)</strong>
+                                <div style="margin-top:8px;"><span class="text-muted">Avg Distance:</span> <strong>${avgRandom.toFixed(2)} km</strong></div>
+                                <div><span class="text-muted">Best:</span> ${bestRandom.toFixed(2)} km &nbsp;|&nbsp; <span class="text-muted">Worst:</span> ${worstRandom.toFixed(2)} km</div>
+                            </div>
+                        </div>`;
+
+            // trials
+            html += `<div style="margin-top:12px;"><strong class="text-muted">Random Trials:</strong></div>`;
+            for (let t = 0; t < trials.length; t++) {
+                const r = trials[t];
+                const routeStr = r.route.map(i => graph.names[i]).join(' → ');
+                html += `<div class="random-trial">
+                            <span class="trial-label">Trial ${t+1}</span>
+                            <span class="trial-dist">${r.distance.toFixed(2)} km &nbsp;|&nbsp; Tk ${(r.distance * graph.fuelRate).toFixed(2)}</span>
+                            <span style="font-size:12px;color:#64748b;font-family:monospace;">${routeStr}</span>
+                        </div>`;
+            }
+
+            // savings
+            if (avgRandom > 0) {
+                const savings = ((avgRandom - greedy.totalDistance) / avgRandom * 100);
+                html +=
+                    `<div style="margin-top:16px;padding:12px 18px;background:#0f1a2a;border-radius:12px;border-left:4px solid #4ade80;">
+                            <span style="color:#4ade80;">&#9654; Greedy saves ${savings.toFixed(2)}% distance vs average random route.</span>
+                        </div>`;
+            }
+
+            document.getElementById('compareResults').innerHTML = html;
+            showToast('Comparison complete.', 'success');
+        }
+
+        // ======================================================================
+        //  ACCOUNT
+        // ======================================================================
+
+        function registerUser() {
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const age = parseInt(document.getElementById('regAge').value);
+            if (!name) { showToast('Please enter your name.', 'error'); return; }
+            if (!phone) { showToast('Please enter your phone number.', 'error'); return; }
+            if (isNaN(age) || age <= 0 || age > 120) { showToast('Please enter a valid age (1-120).', 'error'); return; }
+            if (users.length >= 100) { showToast('Maximum users reached.', 'error'); return; }
+            if (findUserByPhone(phone) !== -1) { showToast(`Account with phone '${phone}' already exists.`, 'warning'); return; }
+
+            users.push({ name, phone, age, favLocation: -1 });
+            loggedInUserIdx = users.length - 1;
+            document.getElementById('regName').value = '';
+            document.getElementById('regPhone').value = '';
+            document.getElementById('regAge').value = '';
+            updateAccountUI();
+            updateDashboard();
+            showToast(`Welcome, ${name}! You are now logged in.`, 'success');
+        }
+
+        function loginUser() {
+            const phone = document.getElementById('loginPhone').value.trim();
+            if (!phone) { showToast('Enter your phone number.', 'error'); return; }
+            const idx = findUserByPhone(phone);
+            if (idx === -1) { showToast('No account found with that phone number.', 'error'); return; }
+            loggedInUserIdx = idx;
+            document.getElementById('loginPhone').value = '';
+            updateAccountUI();
+            updateDashboard();
+            showToast(`Welcome back, ${users[idx].name}!`, 'success');
+        }
+
+        function logoutUser() {
+            if (loggedInUserIdx === -1) { showToast('No user is logged in.', 'warning'); return; }
+            const name = users[loggedInUserIdx].name;
+            loggedInUserIdx = -1;
+            updateAccountUI();
+            updateDashboard();
+            showToast(`Goodbye, ${name}.`, 'info');
+        }
+
+        function updateAccountUI() {
+            const container = document.getElementById('accountStatus');
+            const favContainer = document.getElementById('favStatus');
+            if (loggedInUserIdx >= 0 && loggedInUserIdx < users.length) {
+                const u = users[loggedInUserIdx];
+                container.innerHTML = `
+                            <div class="result-stats">
+                                <div class="stat"><span class="label">Name</span><span class="value">${u.name}</span></div>
+                                <div class="stat"><span class="label">Phone</span><span class="value">${u.phone}</span></div>
+                                <div class="stat"><span class="label">Age</span><span class="value">${u.age}</span></div>
+                            </div>
+                        `;
+                if (u.favLocation >= 0 && u.favLocation < graph.numLoc) {
+                    favContainer.textContent = `⭐ Favorite: ${graph.names[u.favLocation]} (index ${u.favLocation})`;
+                } else {
+                    favContainer.textContent = 'No favorite location set.';
+                }
+            } else {
+                container.innerHTML = `<span class="text-muted">Not logged in. Register or login above.</span>`;
+                favContainer.textContent = '';
+            }
+            updateUserBadge();
+        }
+
+        function setFavorite() {
+            if (loggedInUserIdx === -1) { showToast('Please log in first.', 'error'); return; }
+            const idx = parseInt(document.getElementById('favIdx').value);
+            if (isNaN(idx) || idx <= 0 || idx >= graph.numLoc) { showToast('Invalid location index.', 'error'); return; }
+            users[loggedInUserIdx].favLocation = idx;
+            document.getElementById('favIdx').value = '';
+            updateAccountUI();
+            showToast(`Favorite set to ${graph.names[idx]}.`, 'success');
+        }
+
+        // ======================================================================
+        //  RECEIVE DELIVERY (with OTP)
+        // ======================================================================
+
+        function receiveDelivery() {
+            if (loggedInUserIdx === -1) { showToast('Please log in or register first.', 'error'); return; }
+            if (graph.numLoc < 2) { showToast('No delivery points available.', 'warning'); return; }
+
+            const dest = parseInt(document.getElementById('deliveryIdx').value);
+            if (isNaN(dest) || dest <= 0 || dest >= graph.numLoc) {
+                showToast('Invalid receiving location index.', 'error');
+                return;
+            }
+
+            const { dist, parent } = dijkstra(0);
+            if (dist[dest] >= INF) {
+                showToast(`'${graph.names[dest]}' is unreachable from the Hub.`, 'error');
+                return;
+            }
+
+            const distance = dist[dest];
+            const cost = distance * graph.fuelRate;
+            const timeHours = distance / AVG_SPEED_KMH;
+            let hours = Math.floor(timeHours);
+            let minutes = Math.round((timeHours - hours) * 60);
+            if (minutes === 60) { minutes = 0;
+                hours++; }
+
+            const user = users[loggedInUserIdx];
+            const pathStr = getPathString(parent, dest);
+
+            // Build delivery UI
+            let html = `
+                        <div style="background:#0b0d17;padding:16px 20px;border-radius:12px;border:1px solid #1a2036;">
+                            <div class="result-stats">
+                                <div class="stat"><span class="label">Destination</span><span class="value">${graph.names[dest]}</span></div>
+                                <div class="stat"><span class="label">Distance</span><span class="value blue">${distance.toFixed(2)} km</span></div>
+                                <div class="stat"><span class="label">Wait Time</span><span class="value">${hours}h ${minutes}m</span></div>
+                                <div class="stat"><span class="label">Amount to Pay</span><span class="value gold">Tk ${cost.toFixed(2)}</span></div>
+                            </div>
+                            <div class="path-display" style="font-size:13px;">${pathStr}</div>
+                            <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:10px;">
+                                <button class="btn btn-success" onclick="confirmDelivery(${dest}, ${cost.toFixed(4)})">&#10004; Confirm Payment &amp; Deliver</button>
+                                <button class="btn btn-outline" onclick="cancelDelivery()">Cancel</button>
+                            </div>
+                        </div>
+                    `;
+            document.getElementById('deliveryResults').innerHTML = html;
+            document.getElementById('deliveryIdx').value = '';
+            showToast(`Estimate ready for ${graph.names[dest]}.`, 'info');
+        }
+
+        function confirmDelivery(dest, cost) {
+            // Generate OTP
+            const otp = rand(1000, 9999);
+            pendingOTP = otp;
+            pendingDeliveryDest = dest;
+            pendingDeliveryCost = cost;
+            otpAttempts = 0;
+
+            const user = users[loggedInUserIdx];
+            let html = `
+                        <div style="background:#0b0d17;padding:16px 20px;border-radius:12px;border:1px solid #1a2036;">
+                            <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;">
+                                <span><strong>✅ Payment of Tk ${cost.toFixed(2)} received.</strong></span>
+                                <span class="text-muted">Package on the way to ${graph.names[dest]}</span>
+                            </div>
+                            <div class="otp-box">
+                                <div style="font-size:14px;color:#8892b0;margin-bottom:6px;">📱 SIMULATED SMS to ${user.phone}</div>
+                                <div class="otp-code">${String(otp).padStart(4,'0')}</div>
+                                <div style="font-size:12px;color:#64748b;margin-top:6px;">(In production, sent via real SMS)</div>
+                            </div>
+                            <div style="margin-top:12px;">
+                                <label style="font-size:14px;color:#8892b0;">Enter the 4-digit OTP to confirm receipt:</label>
+                                <div class="form-row" style="margin-top:6px;">
+                                    <div class="form-group" style="flex:1;">
+                                        <input type="number" id="otpInput" placeholder="1234" min="1000" max="9999" />
+                                    </div>
+                                    <button class="btn btn-success" onclick="verifyOTP()">Verify OTP</button>
+                                </div>
+                                <div id="otpStatus" class="text-muted mt-8"></div>
+                            </div>
+                        </div>
+                    `;
+            document.getElementById('deliveryResults').innerHTML = html;
+            showToast(`OTP sent to ${user.phone}`, 'success');
+        }
+
+        function verifyOTP() {
+            const input = document.getElementById('otpInput');
+            const entered = parseInt(input.value);
+            const status = document.getElementById('otpStatus');
+
+            if (isNaN(entered) || entered < 1000 || entered > 9999) {
+                status.textContent = 'Please enter a 4-digit OTP.';
+                status.style.color = '#fbbf24';
+                return;
+            }
+
+            otpAttempts++;
+            if (entered === pendingOTP) {
+                status.textContent = '✅ OTP verified successfully. Delivery confirmed as RECEIVED.';
+                status.style.color = '#4ade80';
+                input.disabled = true;
+                document.querySelector('#deliveryResults .btn-success').disabled = true;
+                showToast('🎉 Delivery confirmed!', 'success');
+                // Clear OTP state
+                pendingOTP = null;
+                pendingDeliveryDest = -1;
+                pendingDeliveryCost = 0;
+            } else {
+                if (otpAttempts >= OTP_MAX_TRIES) {
+                    status.textContent =
+                        '❌ Too many incorrect attempts. Delivery could NOT be verified. Please contact support.';
+                    status.style.color = '#ff5252';
+                    input.disabled = true;
+                    document.querySelector('#deliveryResults .btn-success').disabled = true;
+                    showToast('OTP verification failed.', 'error');
+                    pendingOTP = null;
+                } else {
+                    status.textContent = `❌ Incorrect OTP (attempt ${otpAttempts} of ${OTP_MAX_TRIES}).`;
+                    status.style.color = '#ff5252';
+                    input.value = '';
+                    input.focus();
+                    showToast('Incorrect OTP, try again.', 'warning');
+                }
+            }
+        }
+
+        function cancelDelivery() {
+            document.getElementById('deliveryResults').innerHTML =
+                '<span class="text-muted">Delivery cancelled.</span>';
+            pendingOTP = null;
+            pendingDeliveryDest = -1;
+            pendingDeliveryCost = 0;
+            showToast('Delivery cancelled.', 'info');
+        }
+
+        // ======================================================================
+        //  FUEL RATE (accessed from dashboard)
+        // ======================================================================
+
+        // Expose a way to change fuel rate via console or we add a small UI.
+        // I'll add a quick inline in dashboard.
+
+        // Add a fuel rate changer to dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const dashboardCard = document.querySelector('#panelDashboard .card:last-child');
+            const fuelDiv = document.createElement('div');
+            fuelDiv.className = 'form-row mt-12';
+            fuelDiv.innerHTML = `
+                        <div class="form-group" style="flex:2;">
+                            <label>Fuel Rate (Tk/km)</label>
+                            <input type="number" id="fuelRateInput" step="0.5" value="${graph.fuelRate.toFixed(2)}" min="0.5" />
+                        </div>
+                        <button class="btn btn-outline" onclick="updateFuelRate()">Update Fuel Rate</button>
+                    `;
+            dashboardCard.appendChild(fuelDiv);
+        });
+
+        function updateFuelRate() {
+            const input = document.getElementById('fuelRateInput');
+            const val = parseFloat(input.value);
+            if (isNaN(val) || val <= 0) { showToast('Enter a positive fuel rate.', 'error'); return; }
+            graph.fuelRate = val;
+            updateDashboard();
+            showToast(`Fuel rate updated to Tk ${val.toFixed(2)}/km`, 'success');
+        }
+
+        // ======================================================================
+        //  INIT
+        // ======================================================================
+
+        function seedDefaultNetwork() {
+            // Already have DIU_Hub at index 0
+            const hub = 0;
+            const idx = (name) => {
+                if (graph.numLoc >= MAX_LOC) return -1;
+                for (let i = 0; i < graph.numLoc; i++) {
+                    if (graph.names[i] === name) return i;
+                }
+                graph.names[graph.numLoc] = name;
+                graph.numLoc++;
+                return graph.numLoc - 1;
+            };
+
+            const ashulia = idx('Ashulia');
+            const tongi = idx('Tongi');
+            const uttara = idx('Uttara');
+            const mirpur = idx('Mirpur');
+            const dhamrai = idx('Dhamrai');
+            const banani = idx('Banani');
+            const gulshan = idx('Gulshan');
+            const dhanmondi = idx('Dhanmondi');
+
+            const add = (u, v, d) => {
+                if (u < 0 || v < 0 || u >= graph.numLoc || v >= graph.numLoc) return;
+                if (d <= 0) return;
+                graph.adj[u][v] = d;
+                graph.adj[v][u] = d;
+            };
+
+            add(hub, ashulia, 4.0);
+            add(hub, dhamrai, 15.0);
+            add(hub, tongi, 16.0);
+            add(ashulia, uttara, 10.0);
+            add(tongi, uttara, 10.0);
+            add(uttara, mirpur, 9.0);
+            add(uttara, banani, 8.0);
+            add(mirpur, dhanmondi, 8.0);
+            add(mirpur, banani, 10.0);
+            add(banani, gulshan, 3.0);
+            add(gulshan, dhanmondi, 9.0);
+            add(dhamrai, mirpur, 20.0);
+        }
+
+        function init() {
+            seedDefaultNetwork();
+            // Ensure adjacency is properly sized
+            for (let i = 0; i < MAX_LOC; i++) {
+                if (!graph.adj[i]) graph.adj[i] = [];
+                for (let j = 0; j < MAX_LOC; j++) {
+                    if (graph.adj[i][j] === undefined) graph.adj[i][j] = (i === j) ? 0 : INF;
+                }
+            }
+            updateDashboard();
+            renderLocationList();
+            renderRoadList();
+            renderNetwork();
+            updateAccountUI();
+
+            // Tab switching
+            document.querySelectorAll('.nav-tabs button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    switchTab(this.dataset.tab);
+                });
+            });
+
+            // Enter key support on forms
+            document.getElementById('locNameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    addLocation(); });
+            document.getElementById('roadDist').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    addRoad(); });
+            document.getElementById('regPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    registerUser(); });
+            document.getElementById('loginPhone').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    loginUser(); });
+            document.getElementById('deliveryIdx').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    receiveDelivery(); });
+            document.getElementById('favIdx').addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    setFavorite(); });
+            document.getElementById('fuelRateInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter')
+                    updateFuelRate(); });
+
+            console.log('🚚 Smart Courier Hub initialized.');
+            console.log(`📍 ${graph.numLoc} locations, fuel rate Tk ${graph.fuelRate.toFixed(2)}/km`);
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
